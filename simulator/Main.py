@@ -22,16 +22,18 @@ def main():
         print("Input is not valid")
         return exit(1)
     else:
-        file_prefix = 'Networks/'
+        file_prefix = "Networks/"
         if file_prefix not in str(sys.argv[1]):
-            file_path = 'Networks/' + str(sys.argv[1])
+            file_path = "Networks/" + str(sys.argv[1])
         else:
             file_path = str(sys.argv[1])
         try:
-            graph = networkx.read_edgelist(file_path,
-                                           create_using=networkx.DiGraph(),
-                                           nodetype=str,
-                                           data=[('to', str)])
+            graph = networkx.read_edgelist(
+                file_path,
+                create_using=networkx.DiGraph(),
+                nodetype=str,
+                data=[("to", str)],
+            )
         except FileNotFoundError:
             print("Wrong file or file path")
             return exit(1)
@@ -48,11 +50,11 @@ def main():
                 print("could not identify end vertex")
                 return exit(1)
             else:
-                ham_graph_path = 'graphs/ham_path'
+                ham_graph_path = "graphs/ham_path"
                 edges = enc.encodeEdges(graph, nodes)
                 node_names = getFilterNodeList(nodes, start_vertex, end_vertex)
                 nx.draw_circular(graph, with_labels=True)
-                plt.savefig('graphs/graph.png')
+                plt.savefig("graphs/graph.png")
                 plt.clf()
 
                 x = AssembleNAnneal(graph, nodes, edges, start_vertex, end_vertex)
@@ -156,5 +158,5 @@ def getFilterNodeList(nodes, start, end):
     return node_list
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

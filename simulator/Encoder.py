@@ -27,7 +27,9 @@ class Encoder:
         for node in graph.nodes():
             sequence = ""
             for i in range(self.SEQ_LEN):
-                sequence += str((self.base_list[rand.randint(0, len(self.base_list) - 1)]))
+                sequence += str(
+                    (self.base_list[rand.randint(0, len(self.base_list) - 1)])
+                )
             node_dna_map[node] = sequence
         return node_dna_map
 
