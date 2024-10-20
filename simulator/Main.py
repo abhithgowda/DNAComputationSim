@@ -88,28 +88,38 @@ def AssembleNAnneal(graph, nodes, edges, start, end):
     dseq_list = enc.toDSEQ(graph, edges, nodes)
     p1 = Dseqrecord(nodes[start])
     p2 = Dseqrecord(enc.getSeqComplement(nodes[end]))
-    assembly = Assembly(dseq_list, limit=10, only_terminal_overlaps=True)
+    assembly = Assembly(dseq_list, limit=10)
     print("\n" + str(assembly) + "\n")
     candidates = []
 
-    for i in range(len(assembly.linear_products)):
-        product = assembly.linear_products[i]
-        template = Dseqrecord(product)
-        pcr = Anneal([p1, p2], template, limit=10)
-        gel = len(nodes) * enc.SEQ_LEN
+    # Retrieve linear products (assuming this is how your assembly process works)
+    products = assembly.assemble_linear()  # This should be the method to get assembled products
+    if not isinstance(products, list):  # Check if the output is a list
+        print("Expected a list of products but got:", type(products))
+        return candidates  # Early exit if it's not a list
 
-        if len(pcr.products) != 0:
-            print(product.detailed_figure())
+    for product in products:  # Iterate through each product
+        if hasattr(product, 'detailed_figure'):  # Check if the product has the method
+            print(product.detailed_figure())  # Call the method for each product
             print(product.figure())
-            for p in pcr.products:
-                if len(p.seq) == gel:
-                    p.seq = p.seq[10:]
-                    p.seq = p.seq[:-10]
-                    candidates.append(p)
+        else:
+            print("Product does not have a detailed_figure method:", product)
 
-    # print("\n" +str(nodes))
-    # print(str(edges) +"\n")
+        # Assuming PCR is done here as needed
+        pcr = Anneal([p1, p2], product, limit=10)  # Use the current product for PCR
+        gel = len(nodes) * enc.SEQ_LEN
+        
+        for p in pcr.products:
+            if len(p.seq) == gel:
+                p.seq = p.seq[10:]  # Trimming sequences
+                p.seq = p.seq[:-10]
+                candidates.append(p)
+
     return candidates
+
+
+
+
 
 
 def filter(paths, nodes, node_name_list):
